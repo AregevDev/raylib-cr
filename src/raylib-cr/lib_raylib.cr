@@ -3,9 +3,322 @@ require "./link"
 link_flag
 
 lib LibRaylib
-  PI                          =    3.141592653589793
-  DEG2RAD                     = 0.017453292519943295
-  RAD2DEG                     =    57.29577951308232
+  
+  # ifndef
+
+  PI = 3.14159265358979323846_f64
+
+  DEG2RAD                     = PI / 180.0_f64
+  RAD2DEG                     = 180.0_f64 / PI
+  
+  MAX_TOUCH_POINTS            = 10_u32
+  
+  MAX_SHADER_LOCATIONS = 32_u32
+  MAX_MATERIAL_MAPS = 12_u32
+
+  #{% if RL_MALLOC %}
+  #  RL_MALLOC(sz) = LibC::malloc(sz)
+  #{% end %}
+
+  #{% if RL_CALLOC %}
+  #  RL_CALLOC(n,sz) = LibC::calloc(n,sz)
+  #{% end %}
+
+  #{% if RL_FREE %}
+  #  RL_FREE(p) = LibC::free(p)
+  #{% end %}#
+
+  LIGHTGRAY  = Color.new r: 200, g: 200, b: 200, a: 255
+  GRAY       = Color.new r: 130, g: 130, b: 130, a: 255
+  DARKGRAY   = Color.new r: 80, g: 80, b: 80, a: 255
+  YELLOW     = Color.new r: 253, g: 249, b: 0, a: 255
+  GOLD       = Color.new r: 255, g: 203, b: 0, a: 255
+  ORANGE     = Color.new r: 255, g: 161, b: 0, a: 255
+  PINK       = Color.new r: 255, g: 109, b: 194, a: 255
+  RED        = Color.new r: 230, g: 41, b: 55, a: 255
+  MAROON     = Color.new r: 190, g: 33, b: 55, a: 255
+  GREEN      = Color.new r: 0, g: 228, b: 48, a: 255
+  LIME       = Color.new r: 0, g: 158, b: 47, a: 255
+  DARKGREEN  = Color.new r: 0, g: 117, b: 44, a: 255
+  SKYBLUE    = Color.new r: 102, g: 191, b: 255, a: 255
+  BLUE       = Color.new r: 0, g: 121, b: 241, a: 255
+  DARKBLUE   = Color.new r: 0, g: 82, b: 172, a: 255
+  PURPLE     = Color.new r: 200, g: 122, b: 255, a: 255
+  VIOLET     = Color.new r: 135, g: 60, b: 190, a: 255
+  DARKPURPLE = Color.new r: 112, g: 31, b: 126, a: 255
+  BEIGE      = Color.new r: 211, g: 176, b: 131, a: 255
+  BROWN      = Color.new r: 127, g: 106, b: 79, a: 255
+  DARKBROWN  = Color.new r: 76, g: 63, b: 47, a: 255
+  WHITE      = Color.new r: 255, g: 255, b: 255, a: 255
+  BLACK      = Color.new r: 0, g: 0, b: 0, a: 255
+  BLANK      = Color.new r: 0, g: 0, b: 0, a: 0
+  MAGENTA    = Color.new r: 255, g: 0, b: 255, a: 255
+  RAYWHITE   = Color.new r: 245, g: 245, b: 245, a: 255
+
+  FormatText = TextFormat
+  SubText = TextsubText
+  ShowWindow = UnhideWindow
+
+  # bool type
+
+  struct Vector2
+    x : Float32
+    y : Float32
+  end
+
+  struct Vector3
+    x : Float32
+    y : Float32
+    z : Float32
+  end
+
+  struct Vector4
+    x : Float32
+    y : Float32
+    z : Float32
+    w : Float32
+  end
+
+  alias Quaternion = Vector4
+
+  struct Matrix
+    m0 : Float32
+    m4 : Float32
+    m8 : Float32
+    m12 : Float32
+    m1 : Float32
+    m5 : Float32
+    m9 : Float32
+    m13 : Float32
+    m2 : Float32
+    m6 : Float32
+    m10 : Float32
+    m14 : Float32
+    m3 : Float32
+    m7 : Float32
+    m11 : Float32
+    m15 : Float32
+  end
+
+  struct Color
+    r : UInt8
+    g : UInt8
+    b : UInt8
+    a : UInt8
+  end
+
+  struct Rectangle
+    x : Float32
+    y : Float32
+    width : Float32
+    height : Float32
+  end
+
+  struct Image
+    data : Void*
+    width : Int32
+    height : Int32
+    mipmaps : Int32
+    format : Int32
+  end
+
+  struct Texture2D
+    id : UInt32
+    width : Int32
+    height : Int32
+    mipmaps : Int32
+    format : Int32
+  end
+
+  alias Texture = Texture2D
+
+  alias TextureCubemap = Texture2D
+
+  struct RenderTexture2D
+    id : UInt32
+    texture : Texture2D
+    depth : Texture2D
+    depthTexture : Bool
+  end
+
+  alias RenderTexture = RenderTexture2D
+
+  struct NPatchInfo
+    sourceRec : Rectangle
+    left : Int32
+    top : Int32
+    right : Int32
+    bottom: Int32
+    type : Int32
+  end
+  
+  struct CharInfo
+    value : Int32
+    rec : Rectangle
+    offestX : Int32
+    offestY : Int32
+    advanceX : Int32
+    data : UInt8*
+  end
+
+  struct Font
+    texture : Texture2D
+    baseSize : Int32
+    charsCount : Int32
+    chars : CharInfo*
+  end
+
+  alias SpriteFont = Font
+
+  struct Camera3D
+    position : Vector3
+    target : Vector3
+    up : Vector3
+    fovy : Float32
+    type : Int32
+  end
+
+  struct Camera2D
+    offest : Vector2
+    target : Vector2
+    rotation : Float32
+    zoom : Float32
+  end
+
+  struct Mesh
+    vertexCount : Int32
+    triangleCount : Int32
+    vertices : Float32*
+    texcoords : Float32*
+    texcoords2 : Float32*
+    normals : Float32*
+    tangents : Float32*
+    colors : UInt8*
+    indices : UInt16*
+    animVerticies : Float32*
+    animNormals : Float32*
+    boneIds : Int32
+    boneWeights : Float32*
+    vaoId : UInt32*
+    vboId : StaticArray(UInt32, 7)
+  end
+
+  struct Shader
+    id : UInt32
+    locs : StaticArray(Int32, MAX_SHADER_LOCATIONS)
+  end
+
+  struct MaterialMap
+    texture : Texture2D
+    color : Color
+    value : Float32
+  end
+
+  struct Material
+    shader : Shader
+    maps : StaticArray(MaterialMap, MAX_MATERIAL_MAPS)
+    params : Float32*
+  end
+
+  struct Transform
+    translation : Vector3
+    rotation : Quaternion
+    scale : Vector3
+  end
+
+  struct BoneInfo
+    name : StaticArray(Int8, 32)
+    parent : Int32
+  end
+
+  struct Model
+    transform : Matrix
+    meshCount : Mesh
+    meshes : Mesh*
+    materialCount : Int32
+    materials : Material*
+    meshMaterial : Int32*
+    bones : BoneInfo*
+    bindPose : Transform*
+  end
+
+  struct ModelAnimation
+    boneCount : Int32
+    bones : BoneInfo*
+    frameCount : Int32
+    framePoses : Transform**
+  end
+
+  struct Ray
+    position : Vector3
+    direction : Vector3
+  end
+
+  struct RayHitInfo
+    hit : Bool
+    distance : Float32
+    position : Vector3
+    normal : Vector3
+  end
+
+  struct BoundingBox
+    min : Vector3
+    max : Vector3
+  end
+
+  struct Wave
+    sampleCount : UInt32
+    sampleRate : UInt32
+    sampleSize : UInt32
+    channels : UInt32
+    data : Void*
+  end
+
+  struct Sound
+    audioBuffer : Void*
+    source : UInt32
+    buffer : UInt32
+    format : Int32
+  end
+
+  # alias Music = MusicData* 
+
+  struct AudioStream
+    sampleRate : UInt32
+    sampleSize : UInt32
+    channels : UInt32
+    audioBuffer : Void*
+    format : Int32
+    source : UInt32
+    buffers : StaticArray(UInt32, 2)
+  end
+
+  struct VrDeviceInfo
+    hResolution : Int32
+    vResolution : Int32
+    hScreenSize : Float32
+    vScreenSize : Float32
+    vScreenCenter : Float32
+    eyeToScreenDistance : Float32
+    lensSeparationDistance : Float32
+    interpupillaryDistance : Float32
+    lensDistortionValues : StaticArray(Float32, 4)
+    chromaAbCorrection : StaticArray(Float32, 4)
+  end
+
+  # enums
+
+  alias LogType = UInt32
+  alias TexmapIndex = UInt32
+  alias PixelFormat = UInt32
+  alias TextureFilterMode = UInt32
+  alias TextureWrapMode = UInt32
+  alias BlendMode = UInt32
+  alias Gestures = UInt32
+  alias CameraMode = UInt32
+  alias CameraType = UInt32
+  alias VrDeviceType = UInt32
+
   FLAG_SHOW_LOGO              =                1_u32
   FLAG_FULLSCREEN_MODE        =                2_u32
   FLAG_WINDOW_RESIZABLE       =                4_u32
@@ -97,7 +410,6 @@ lib LibRaylib
   MOUSE_LEFT_BUTTON           =                0_u32
   MOUSE_RIGHT_BUTTON          =                1_u32
   MOUSE_MIDDLE_BUTTON         =                2_u32
-  MAX_TOUCH_POINTS            =                2_u32
   GAMEPAD_PLAYER1             =                0_u32
   GAMEPAD_PLAYER2             =                1_u32
   GAMEPAD_PLAYER3             =                2_u32
@@ -157,8 +469,6 @@ lib LibRaylib
   GAMEPAD_XBOX_AXIS_RIGHT_Y   =                3_u32
   GAMEPAD_XBOX_AXIS_LT        =                4_u32
   GAMEPAD_XBOX_AXIS_RT        =                5_u32
-  MAX_SHADER_LOCATIONS        =               32_u32
-  MAX_MATERIAL_MAPS           =               12_u32
   LOG_INFO                    =                1_u32
   LOG_WARNING                 =                2_u32
   LOG_ERROR                   =                4_u32
@@ -257,248 +567,6 @@ lib LibRaylib
   HMD_OCULUS_GO               =                3_u32
   HMD_VALVE_HTC_VIVE          =                4_u32
   HMD_SONY_PSVR               =                5_u32
-
-  LIGHTGRAY  = Color.new r: 200, g: 200, b: 200, a: 255
-  GRAY       = Color.new r: 130, g: 130, b: 130, a: 255
-  DARKGRAY   = Color.new r: 80, g: 80, b: 80, a: 255
-  YELLOW     = Color.new r: 253, g: 249, b: 0, a: 255
-  GOLD       = Color.new r: 255, g: 203, b: 0, a: 255
-  ORANGE     = Color.new r: 255, g: 161, b: 0, a: 255
-  PINK       = Color.new r: 255, g: 109, b: 194, a: 255
-  RED        = Color.new r: 230, g: 41, b: 55, a: 255
-  MAROON     = Color.new r: 190, g: 33, b: 55, a: 255
-  GREEN      = Color.new r: 0, g: 228, b: 48, a: 255
-  LIME       = Color.new r: 0, g: 158, b: 47, a: 255
-  DARKGREEN  = Color.new r: 0, g: 117, b: 44, a: 255
-  SKYBLUE    = Color.new r: 102, g: 191, b: 255, a: 255
-  BLUE       = Color.new r: 0, g: 121, b: 241, a: 255
-  DARKBLUE   = Color.new r: 0, g: 82, b: 172, a: 255
-  PURPLE     = Color.new r: 200, g: 122, b: 255, a: 255
-  VIOLET     = Color.new r: 135, g: 60, b: 190, a: 255
-  DARKPURPLE = Color.new r: 112, g: 31, b: 126, a: 255
-  BEIGE      = Color.new r: 211, g: 176, b: 131, a: 255
-  BROWN      = Color.new r: 127, g: 106, b: 79, a: 255
-  DARKBROWN  = Color.new r: 76, g: 63, b: 47, a: 255
-  WHITE      = Color.new r: 255, g: 255, b: 255, a: 255
-  BLACK      = Color.new r: 0, g: 0, b: 0, a: 255
-  BLANK      = Color.new r: 0, g: 0, b: 0, a: 0
-  MAGENTA    = Color.new r: 255, g: 0, b: 255, a: 255
-  RAYWHITE   = Color.new r: 245, g: 245, b: 245, a: 255
-
-  alias LogType = UInt32
-  alias ShaderLocationIndex = UInt32
-  alias TexmapIndex = UInt32
-  alias PixelFormat = UInt32
-  alias TextureFilterMode = UInt32
-  alias TextureWrapMode = UInt32
-  alias BlendMode = UInt32
-  alias Gestures = UInt32
-  alias CameraMode = UInt32
-  alias CameraType = UInt32
-  alias VrDeviceType = UInt32
-  alias Texture = Texture2D
-  alias Quaternion = Vector4
-  alias Music = MusicData*
-
-  struct Vector2
-    x : Float32
-    y : Float32
-  end
-
-  struct Vector3
-    x : Float32
-    y : Float32
-    z : Float32
-  end
-
-  struct Vector4
-    x : Float32
-    y : Float32
-    z : Float32
-    w : Float32
-  end
-
-  struct Matrix
-    m0 : Float32
-    m4 : Float32
-    m8 : Float32
-    m12 : Float32
-    m1 : Float32
-    m5 : Float32
-    m9 : Float32
-    m13 : Float32
-    m2 : Float32
-    m6 : Float32
-    m10 : Float32
-    m14 : Float32
-    m3 : Float32
-    m7 : Float32
-    m11 : Float32
-    m15 : Float32
-  end
-
-  struct Color
-    r : UInt8
-    g : UInt8
-    b : UInt8
-    a : UInt8
-  end
-
-  struct Rectangle
-    x : Float32
-    y : Float32
-    width : Float32
-    height : Float32
-  end
-
-  struct Image
-    data : Void*
-    width : Int32
-    height : Int32
-    mipmaps : Int32
-    format : Int32
-  end
-
-  struct Texture2D
-    id : UInt32
-    width : Int32
-    height : Int32
-    mipmaps : Int32
-    format : Int32
-  end
-
-  struct RenderTexture2D
-    id : UInt32
-    texture : Texture2D
-    depth : Texture2D
-  end
-
-  struct CharInfo
-    value : Int32
-    rec : Rectangle
-    offestX : Int32
-    offestY : Int32
-    advanceX : Int32
-    data : UInt8*
-  end
-
-  struct Font
-    texture : Texture2D
-    baseSize : Int32
-    charsCount : Int32
-    chars : CharInfo*
-  end
-
-  struct Camera3D
-    position : Vector3
-    target : Vector3
-    up : Vector3
-    fovy : Float32
-    type_ : Int32
-  end
-
-  struct Camera2D
-    offest : Vector2
-    target : Vector2
-    rotation : Float32
-    zoom : Float32
-  end
-
-  struct BoundingBox
-    min : Vector3
-    max : Vector3
-  end
-
-  struct Mesh
-    vertexCount : Int32
-    triangleCount : Int32
-    vertices : Float32
-    texcoords : Float32*
-    texcoords2 : Float32*
-    normals : Float32*
-    tangents : Float32*
-    colors : UInt8*
-    indices : UInt16*
-    vaoId : UInt32*
-    vboId : StaticArray(UInt32, 7)
-  end
-
-  struct Shader
-    id : UInt32
-    locs : StaticArray(Int32, 32)
-  end
-
-  struct MaterialMap
-    texture : Texture2D
-    color : Color
-    value : Float32
-  end
-
-  struct Material
-    shader : Shader
-    maps : StaticArray(MaterialMap, 12)
-    params : Float32*
-  end
-
-  struct Model
-    mesh : Mesh
-    transform : Matrix
-    material : Material
-  end
-
-  struct Ray
-    position : Vector3
-    direction : Vector3
-  end
-
-  struct RayHitInfo
-    hit : Bool
-    distance : Float32
-    position : Vector3
-    normal : Vector3
-  end
-
-  struct Wave
-    sampleCount : UInt32
-    sampleRate : UInt32
-    sampleSize : UInt32
-    channels : UInt32
-    data : Void*
-  end
-
-  struct Sound
-    audioBuffer : Void*
-    source : UInt32
-    buffer : UInt32
-    format : Int32
-  end
-
-  struct MusicData
-    _unused : StaticArray(UInt8, 0)
-  end
-
-  struct AudioStream
-    sampleRate : UInt32
-    sampleSize : UInt32
-    channels : UInt32
-    audioBuffer : Void*
-    format : Int32
-    source : UInt32
-    buffers : StaticArray(UInt32, 2)
-  end
-
-  struct VrDeviceInfo
-    hResolution : Int32
-    vResolution : Int32
-    hScreenSize : Float32
-    vScreenSize : Float32
-    vScreenCenter : Float32
-    eyeToScreenDistance : Float32
-    lensSeparationDistance : Float32
-    pinterpupillaryDistance : Float32
-    lensDistortionValues : StaticArray(Float32, 4)
-    chromaAbCorrection : StaticArray(Float32, 4)
-  end
 
   fun init_window = InitWindow(width : Int32, height : Int32, title : UInt8*)
   fun close_window = CloseWindow
