@@ -24,7 +24,7 @@ dependencies:
 ```
 2. Run `shards install`
 
-### Usage Example
+### Example
 
 ```crystal
 require "raylib-cr"
