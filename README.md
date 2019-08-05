@@ -8,13 +8,13 @@ I plan on making a more object-oriented wrapper around raylib.
 
 The native libraries can be found in the `native/<OSNAME>` folder of this repository.
 
-# Supported platforms
+### Supported platforms
 
 These platforms are supported out of the box and are linked statically
 1. `x86_64-linux-gnu` = 64-bit Linux
 2. `x86_64-darwin` = 64-bit OSX
 
-# Installation
+### Installation
 
 1. Add `raylib-cr` to your `shard.yml`:
 ```yml
@@ -24,7 +24,7 @@ dependencies:
 ```
 2. Run `shards install`
 
-# Usage Example
+### Usage Example
 
 ```crystal
 require "raylib-cr"
@@ -56,14 +56,14 @@ end
 LibRaylib.close_window
 ```
 
-# TODO:
+### TODO:
 
 These are my plans for `v1.0.0`
 - [ ] Proper testing with `crystal spec`
 - [ ] Setup Travis CI
 - [ ] OOP Wrapper
 
-# Contributing
+### Contributing
 
 1. Fork it (https://github.com/AregevDev/raylib-cr)
 2. Create your feature branch (`git checkout -b my-new-feature`)
@@ -71,6 +71,6 @@ These are my plans for `v1.0.0`
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-# Contributors
+### Contributors
 
 - [AregevDev](https://github.com/AregevDev) - creator and maintainer
