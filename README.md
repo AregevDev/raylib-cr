@@ -2,6 +2,8 @@
 
 # raylib-cr
 
+## **This repo is unmaintained, you can find an updated version of raylib-cr at**  https://github.com/sol-vin/raylib-cr
+
 Crystal Bindings for `raylib`, a small and easy to use game development library.  
 As for now the bindings only support the raw function calls from raylib itself, a wrapper will be out shortly, 
 I plan on making a more object-oriented wrapper around raylib.  
